@@ -1,6 +1,8 @@
 require('./config/config');
 
 const express = require('express');
+const mongoose = require('mongoose');
+
 const app = express();
 
 // parse application/x-www-form-urlencoded
@@ -9,33 +11,17 @@ app.use(express.urlencoded({ extended: true }));
 // parse application/json
 app.use(express.json());
 
-app.get('/usuario', (req, res) => {
-    res.json('get Usuario');
-});
+app.use(require('./routes/routes'));
 
-app.post('/usuario', (req, res) => {
-    let body = req.body;
-    if (body.name === undefined) {
-        res.status(400).json({
-            ok: false,
-            message: 'El nombre es un atributo necesario'
-        })
-    }
-    res.json({
-        persona: body
+mongoose.connect(process.env.URLDB, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    }).then((resp) => {
+        console.log('Conectado');
+    })
+    .catch((error) => {
+        console.log('Error en conexión a MongoDB', error);
     });
-});
-
-app.put('/usuario/:id', function(req, res) {
-    let id = req.params.id;
-    res.json({
-        id
-    });
-});
-
-app.delete('/usuario', function(req, res) {
-    res.json('delete Usuario');
-});
 
 app.listen(process.env.PORT, () => {
     console.log('Escuchando puerto: ', process.env.PORT);
