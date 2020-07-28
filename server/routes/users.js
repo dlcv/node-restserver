@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 
 const User = require('../models/user');
+const { verify, verifyAdmin } = require('../middlewares/auth');
 
 const bcrypt = require('bcrypt');
 
 const _ = require('underscore');
 
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verify, (req, res) => {
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.limit) || 5;
     let condition = { status: true };
@@ -31,7 +32,7 @@ app.get('/usuario', (req, res) => {
         });
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verify, verifyAdmin], (req, res) => {
     let body = req.body;
 
     let user = new User({
@@ -58,7 +59,7 @@ app.post('/usuario', (req, res) => {
     });
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verify, verifyAdmin], function(req, res) {
     let id = req.params.id;
     let body = _.pick(req.body, ['name', 'password', 'email', 'img', 'role', 'status']);
 
@@ -77,7 +78,7 @@ app.put('/usuario/:id', function(req, res) {
     })
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verify, verifyAdmin], function(req, res) {
     let id = req.params.id;
     User.findByIdAndUpdate(id, { status: false }, { new: true }, (err, deleted) => {
         if (err) {

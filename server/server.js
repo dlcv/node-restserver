@@ -2,16 +2,16 @@ require('./config/config');
 
 const express = require('express');
 const mongoose = require('mongoose');
-
 const app = express();
 
-// parse application/x-www-form-urlencoded
+// Parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// parse application/json
+// Parse application/json
 app.use(express.json());
 
-app.use(require('./routes/routes'));
+// Routes
+app.use(require('./routes/index'));
 
 mongoose.connect(process.env.URLDB, {
         useNewUrlParser: true,
