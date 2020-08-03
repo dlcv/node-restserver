@@ -15,8 +15,8 @@ let verify = (req, res, next) => {
 };
 
 let verifyAdmin = (req, res, next) => {
-    let user = req.user;
-    if (user.role !== 'ADMIN_ROLE') {
+    let role = req.user.role;
+    if (role !== 'ADMIN_ROLE') {
         return res.status(401).json({
             ok: false,
             err: "El usuario no tiene los privilegios para realizar esta acción"

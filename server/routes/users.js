@@ -33,15 +33,12 @@ app.get('/usuario', verify, (req, res) => {
 });
 
 app.post('/usuario', [verify, verifyAdmin], (req, res) => {
-    let body = req.body;
-
     let user = new User({
-        name: body.name,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        role: body.role
+        name: req.body.name,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        role: req.body.role
     });
-
     user.save((err, userdb) => {
         if (err) {
             return res.status(400).json({
@@ -49,9 +46,6 @@ app.post('/usuario', [verify, verifyAdmin], (req, res) => {
                 err
             });
         }
-
-        // userdb.password = null
-
         res.json({
             ok: true,
             user: userdb
@@ -62,20 +56,20 @@ app.post('/usuario', [verify, verifyAdmin], (req, res) => {
 app.put('/usuario/:id', [verify, verifyAdmin], function(req, res) {
     let id = req.params.id;
     let body = _.pick(req.body, ['name', 'password', 'email', 'img', 'role', 'status']);
-
     User.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, userdb) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                err
+                err: {
+                    message: 'El ID del usuario no fue encontrado'
+                }
             });
         }
-
         res.json({
             ok: true,
             user: userdb
         });
-    })
+    });
 });
 
 app.delete('/usuario/:id', [verify, verifyAdmin], function(req, res) {
@@ -90,7 +84,9 @@ app.delete('/usuario/:id', [verify, verifyAdmin], function(req, res) {
         if (!deleted) {
             return res.status(400).json({
                 ok: false,
-                message: 'Usuario no encontrado'
+                err: {
+                    message: 'El ID del usuario no fue encontrado'
+                }
             });
         }
         res.json({
