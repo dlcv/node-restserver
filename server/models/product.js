@@ -26,6 +26,10 @@ var productSchema = new Schema({
         required: true,
         default: true
     },
+    image: {
+        type: String,
+        required: false
+    },
     category: {
         type: Schema.Types.ObjectId,
         ref: 'Category',

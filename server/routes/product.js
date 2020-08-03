@@ -12,7 +12,7 @@ app.get('/producto', verify, (req, res) => {
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.limit) || 5;
     let condition = { status: true };
-    Product.find(condition, 'name price description status category')
+    Product.find(condition, 'name price description image status category')
         .skip(from)
         .limit(limit)
         .sort('name')
@@ -38,7 +38,7 @@ app.get('/producto', verify, (req, res) => {
 // List one product
 app.get('/producto/:id', (req, res) => {
     let id = req.params.id;
-    Product.findById(id, 'name price description status category')
+    Product.findById(id, 'name price description image status category')
         .populate('category', 'name')
         .populate('user', 'name')
         .exec((err, product) => {
@@ -67,7 +67,7 @@ app.get('/producto/:id', (req, res) => {
 app.get('/producto/buscar/:query', verify, (req, res) => {
     let regex = new RegExp(req.params.query, 'i');
     let condition = { name: regex };
-    Product.find(condition, 'name price description status category')
+    Product.find(condition, 'name price description image status category')
         .sort('name')
         .populate('category', 'name')
         .populate('user', 'name')
